@@ -12,12 +12,11 @@ const App = () => {
     };
 
     useEffect(() => {
-        // Ambil token dari localStorage saat komponen di-mount
         const storedToken = localStorage.getItem('token');
         if (storedToken) {
             setToken(storedToken);
         }
-    }, []); // Kita hanya ingin menjalankan useEffect saat komponen di-mount
+    }, []);
 
 
     return (

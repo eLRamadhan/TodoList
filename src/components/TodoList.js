@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
+import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import Swal from "sweetalert2";
 
 const TodoList = () => {
     const handleLogout = () => {
-        // Hapus token dari localStorage saat logout
         localStorage.removeItem('token');
-        // Mengarahkan pengguna kembali ke halaman login
         window.location.href = '/';
     };
 
@@ -35,11 +33,10 @@ const TodoList = () => {
         };
 
         fetchData();
-    }, []); // Empty dependency array ensures that this effect runs once when the component mounts
+    }, []);
 
     const handleCheckboxChange = async (parentId, itemId) => {
         try {
-            // Toggle status itemCompletionStatus
             setData((prevData) =>
                 prevData.map((parentItem) => {
                     if (parentItem.id === parentId) {
@@ -54,7 +51,6 @@ const TodoList = () => {
                 })
             );
 
-            // Hit endpoint untuk memperbarui status itemCompletionStatus
             await axios.put(
                 `http://94.74.86.174:8080/api/checklist/${parentId}/item/${itemId}`,
                 {
@@ -92,12 +88,12 @@ const TodoList = () => {
 
     const handleAddTodoClick = () => {
         setAddingNewTodo(true);
-        setAddingNewSubTodo(false); // Reset adding new sub todo state
+        setAddingNewSubTodo(false);
     };
 
     const handleAddSubTodoClick = (parentId) => {
         setAddingNewSubTodo(true);
-        setAddingNewTodo(false); // Reset adding new todo state
+        setAddingNewTodo(false);
         setCurrentParentId(parentId);
     };
 
@@ -164,7 +160,6 @@ const TodoList = () => {
 
     const handleRenameSubTodo = async (parentId, itemId, newName) => {
         try {
-            // Hit endpoint untuk merename sub todo
             await axios.put(
                 `http://94.74.86.174:8080/api/checklist/${parentId}/item/rename/${itemId}`,
                 { itemName: newName },
@@ -179,7 +174,6 @@ const TodoList = () => {
                 title: 'Berhasil!',
                 text: 'Data Berhasil diubah.',
             });
-            // Update state dengan mengganti nama dan mengubah status editing
             setData((prevData) =>
                 prevData.map((parentItem) =>
                     parentItem.id === parentId
