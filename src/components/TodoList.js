@@ -37,21 +37,40 @@ const TodoList = () => {
         fetchData();
     }, []); // Empty dependency array ensures that this effect runs once when the component mounts
 
-    const handleCheckboxChange = (parentId, itemId) => {
-        setData((prevData) =>
-            prevData.map((parentItem) => {
-                if (parentItem.id === parentId) {
-                    return {
-                        ...parentItem,
-                        items: parentItem.items.map((item) =>
-                            item.id === itemId ? { ...item, itemCompletionStatus: !item.itemCompletionStatus } : item
-                        ),
-                    };
+    const handleCheckboxChange = async (parentId, itemId) => {
+        try {
+            // Toggle status itemCompletionStatus
+            setData((prevData) =>
+                prevData.map((parentItem) => {
+                    if (parentItem.id === parentId) {
+                        return {
+                            ...parentItem,
+                            items: parentItem.items.map((item) =>
+                                item.id === itemId ? { ...item, itemCompletionStatus: !item.itemCompletionStatus } : item
+                            ),
+                        };
+                    }
+                    return parentItem;
+                })
+            );
+
+            // Hit endpoint untuk memperbarui status itemCompletionStatus
+            await axios.put(
+                `http://94.74.86.174:8080/api/checklist/${parentId}/item/${itemId}`,
+                {
+                    itemCompletionStatus: data.find((parentItem) => parentItem.id === parentId).items.find((item) => item.id === itemId).itemCompletionStatus,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
                 }
-                return parentItem;
-            })
-        );
+            );
+        } catch (error) {
+            console.error(`Failed to update item with id ${itemId}:`, error.message);
+        }
     };
+
 
     const handleDeleteTodo = async (id) => {
         try {
